@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>3D Printer Demo Dapp</title>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <script src="./app.js"></script>
+</head>
+
+<body>
+  <h1>3DPrinter</h1>
+  <br>
+  <h2>Demo 3DPrinter Dapp</h2>
+  <br>
+
+  <div style="border:1px solid pink;padding:10px;font-size:15px">
+    <br><label for="PartId">Part Id:</label><input type="text" id="partId" placeholder="e.g., 1001"></input>
+    <br><label for="PartName">Part Name:</label><input type="text" id="partName" placeholder="e.g., PrintHead"></input>
+    <br><label for="vendorAddress">Vendor Address:</label><input type="text" id="vendorAddress" placeholder="not required"></input>
+    <br><br><button id="placeOrder" onclick="App.placeOrder()">Place Order</button>
+  </div>
+  <span id="status"></span>
+  <br>
+  <br>
+  <br><button id="printerBalance" onclick="App.getBalance(web3.eth.accounts[1])">Get Balance</button>
+  <span id="printerBalanceSpan"></span>
+  <br>
+  <br>
+  <span class="hint"><strong></strong> Payment Window </span>
+  <div style="border:1px solid pink;padding:10px;font-size:15px">
+    <br><label for="addressToPay">Vendor Address:</label><input type="text" id="addressToPay" placeholder=""></input>
+    <br><label for="priceToPay">Price to Pay:</label><input type="text" id="priceToPay" placeholder="e.g., 100 in ether"></input>
+    <br><br><button id="Pay" onclick="App.payToVendor()">pay</button>
+  </div>
+  <br>
+  <br>
+  <span id="paymentDetails"></span>
+  <br>
+  <br>
+  <!--  function addItemToInventory(uint partid, string itemName, uint price)-->
+  <span class="hint"><strong></strong>Vendor</span>
+  <div style="border:1px solid pink;padding:10px;font-size:15px">
+    <br><label for="PartId_v">Part ID:</label><input type="text" id="partId_v" placeholder="e.g., 1001"></input>
+    <br><label for="ItemName">Part NAME:</label><input type="text" id="itemName" placeholder="e.g., PrintHead"></input>
+    <br><label for="Price">Part Price (In Ether):</label><input type="text" id="price" placeholder="e.g.,100 in ether"></input>
+    <br><br><button id="Add Item To Inventory" onclick="App.addItemToInventory()">Add Item</button>
+    <br><br>
+  </div>
+  <span id="statusAddItem"></span>
+  <br>
+  <br>
+  <br><button id="vendorBalance" onclick="App.getBalance(web3.eth.accounts[0])">Get Balance</button>
+  <span id="vendorBalanceSpan"></span>
+  <br>
+  <br>
+
+</body>
+
+</html>
