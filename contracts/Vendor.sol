@@ -24,7 +24,7 @@ contract Vendor {
     }
   }
 
-  function getBalance() public ownerOnly returns (uint ownerBalance) {
+  function getBalance() public ownerOnly view returns(uint ownerBalance) {
     //will return owners coinbase balance
     //work in progress
     return owner.balance;
@@ -66,7 +66,7 @@ contract Vendor {
     }
   }
 
-  function getItemQuantity(string name) public returns(uint) {
+  function getItemQuantity(string name) public view returns(uint) {
     uint availableQuantity = partQuantity[name];
     return availableQuantity;
   }
@@ -75,7 +75,7 @@ contract Vendor {
     owner = newOwner;
   }
   
-  function() payable  {
+  function() public payable  {
     //log an event here
   }
 

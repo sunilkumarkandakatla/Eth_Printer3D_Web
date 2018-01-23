@@ -16,21 +16,20 @@ contract Printer3D {
     }
   }
 
-  function Printer3D(uint printerId, string printerName) {
+  function Printer3D(uint printerId, string printerName) public {
     //constructor
     printerid = printerId;
     printername = printerName;
     owner = msg.sender;
   }
 
-  function callVendor(address vendorAddr, string partname) external returns (bool){
+  function callVendor(address vendorAddr, string partname) external returns(bool){
     address user = msg.sender;
     Vendor vendor = Vendor(vendorAddr);
     return vendor.deliver_parts(partname, user);
   }
 
-
-  function getbalance() ownerOnly returns(uint balance) {
+  function getbalance() public ownerOnly view returns(uint balance) {
     return owner.balance;
   }
 

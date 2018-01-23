@@ -141,7 +141,7 @@ window.App = {
 
     Vendor.deployed().then(function (vendor_instance) {
       console.log("vendor contract address while adding ", vendor_instance.address);
-      return vendor_instance.addItemToInventory(partId, itemName, price, { from: printer_account, gas: 3000000 });
+      return vendor_instance.addItemToInventory(partId, itemName, price, { from: vendor_account, gas: 3000000 });
     }).then(function () {
       self.setStatusVendor("Transaction complete addItemToInventory!");
     }).catch(function (e) {
@@ -158,8 +158,6 @@ window.App = {
     var priceInEther = parseInt(document.getElementById("priceToPay").value);
     var valueInWei = web3.toWei(priceInEther, 'ether');
 
-
-    var printer;
     var transObject = {};
     transObject.from = printer_account;
     transObject.value = valueInWei;
@@ -190,7 +188,7 @@ window.App = {
       if (!error) {
         var bal = web3.fromWei(result, 'ether').toFixed(2);
 
-        if (acc === vendor_account) {
+        if (acc === printer_account) {
           console.log("Balance is " + bal);
           self.setVendorBalance("Balance of Vendor " + bal + " ethers")
         } else {
