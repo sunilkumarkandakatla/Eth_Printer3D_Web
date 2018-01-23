@@ -15,7 +15,6 @@ contract Vendor {
   mapping(string => uint) partQuantity; //partname --> part total quantity
 
   event shipmentStatus(address user, string itemName, uint priceToPay, address whomToPay, string message); //will be triggered when 
-  
 
   modifier ownerOnly {
     if(msg.sender == owner){
@@ -47,22 +46,19 @@ contract Vendor {
 
     inventory[itemName] = p;
     partQuantity[itemName] += 1;
-
     return true;
   }
 
-
-  function deliver_parts(string name, address user) external returns (bool) {  //this fn will be called from printer contract
+  //this fn will be called from printer contract
+  function deliver_parts(string name, address user) external returns (bool) {
     if(partQuantity[name] > 0) {
       //items available ship the item
       //fire the event
       uint itemPrice = inventory[name].price;  //price to pay
       //reduce the quantity of the item code to be written.
       shipmentStatus(user, name, itemPrice, owner, "item shipped"); //this event will be received by frontend
-
       return true;
-
-    }else{
+    } else {
       //items not available
       itemPrice = 0;
       shipmentStatus(user, name, itemPrice, owner, "item not available"); //this event will be received by frontend
@@ -70,13 +66,9 @@ contract Vendor {
     }
   }
 
-
   function getItemQuantity(string name) public returns(uint) {
-
     uint availableQuantity = partQuantity[name];
-
     return availableQuantity;
-
   }
 
   function transferOwnership(address newOwner) internal ownerOnly returns(bool){
@@ -86,7 +78,6 @@ contract Vendor {
   function() payable  {
     //log an event here
   }
-
 
 }
 

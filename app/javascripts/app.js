@@ -16,10 +16,8 @@ var Vendor = contract(vendor_artifacts);
 // The following code is simple to show off interacting with your contracts.
 // As your needs grow you will likely need to change its form and structure.
 // For application bootstrapping, check out window.addEventListener below.
-var accounts;
-var account;
-var venderAddress;
-var account1;
+var vendor_account;
+var printer_account;
 
 window.App = {
   start: function () {
@@ -30,20 +28,19 @@ window.App = {
     Vendor.setProvider(web3.currentProvider);
 
     // Get the initial account balance so it can be displayed.
-    web3.eth.getAccounts(function (err, accs) {
+    web3.eth.getAccounts(function (err, accounts) {
       if (err != null) {
         alert("There was an error fetching your accounts.");
         return;
       }
 
-      if (accs.length == 0) {
+      if (accounts.length == 0) {
         alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.");
         return;
       }
 
-      accounts = accs;
-      account = accounts[0]; //vendor
-      account1 = accounts[1]; // printer
+      vendor_account = accounts[0]; //vendor
+      printer_account = accounts[1]; // printer
 
       //self.refreshBalance();
     });
@@ -98,12 +95,13 @@ window.App = {
 
     //var partId = document.getElementById("partId").value;
     var partName = document.getElementById('partName').value;
-    //var VenderAddress = document.getElementById('vendorAddress').value;
-    var vendor;
-    Vendor.deployed().then(function (instance) {
-      vendor = instance;
+    //var vendor_instance_address = document.getElementById('vendorAddress').value;
+    var vendor_instance_address;
+    Vendor.deployed().then(function (vendor_instance) {
+      console.log("vendor instance detatils", vendor_instance.address);
+      vendor_instance_address = vendor_instance.address;
       //watch shipmemt status event
-      var shipmentEvent = vendor.shipmentStatus();
+      var shipmentEvent = vendor_instance.shipmentStatus();
       shipmentEvent.watch((error, result) => {
         if (!error) {
           self.setStatus("shipment status " + result.args.message + ", Price to Pay in ether's " + result.args.priceToPay + " To Address " + result.args.whomToPay);
@@ -113,8 +111,6 @@ window.App = {
           console.log("error retriving event data" + error);
         }
       });
-      console.log("instance detatils", vendor.address);
-      return venderAddress = vendor.address;
     }).then(function () {
       console.log("got the address of the contract")
     }).catch(function (e) {
@@ -122,11 +118,9 @@ window.App = {
     });
 
 
-    var printer;
-    Printer3D.deployed().then(function (instance) {
-      printer = instance;
-      console.log("Printer Contract Address while Placing Order", printer.address);
-      return printer.callVendor(venderAddress, partName, { from: account });
+    Printer3D.deployed().then(function (printer_instance) {
+      console.log("printer instance detatils", printer_instance.address);
+      return printer_instance.callVendor(vendor_instance_address, partName, { from: printer_account });
     }).then(function () {
       console.log("Transaction complete!");
     }).catch(function (e) {
@@ -145,11 +139,9 @@ window.App = {
 
     this.setStatusVendor("Initiating transaction... (please wait)");
 
-    var vendor;
-    Vendor.deployed().then(function (instance) {
-      vendor = instance;
-      console.log("vendor contract address while adding ", vendor.address);
-      return vendor.addItemToInventory(partId, itemName, price, { from: account1, gas: 3000000 });
+    Vendor.deployed().then(function (vendor_instance) {
+      console.log("vendor contract address while adding ", vendor_instance.address);
+      return vendor_instance.addItemToInventory(partId, itemName, price, { from: printer_account, gas: 3000000 });
     }).then(function () {
       self.setStatusVendor("Transaction complete addItemToInventory!");
     }).catch(function (e) {
@@ -162,16 +154,16 @@ window.App = {
     var self = this;
     this.setStatusPayment("Initiating Payment... (please wait)");
 
-    //var vendoraccount = document.getElementById("addressToPay").value;  
+    //var vendor_account = document.getElementById("addressToPay").value;  
     var priceInEther = parseInt(document.getElementById("priceToPay").value);
     var valueInWei = web3.toWei(priceInEther, 'ether');
 
 
     var printer;
     var transObject = {};
-    transObject.from = account1;
+    transObject.from = printer_account;
     transObject.value = valueInWei;
-    transObject.to = account;
+    transObject.to = vendor_account;
     //transObject.gas = "";
     //transObject.gasPrice = "";
     //transObject.nonce = ""; 
@@ -198,7 +190,7 @@ window.App = {
       if (!error) {
         var bal = web3.fromWei(result, 'ether').toFixed(2);
 
-        if (acc === account) {
+        if (acc === vendor_account) {
           console.log("Balance is " + bal);
           self.setVendorBalance("Balance of Vendor " + bal + " ethers")
         } else {
